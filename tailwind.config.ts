@@ -8,6 +8,14 @@ const config: Config = {
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "*.{js,ts,jsx,tsx,mdx}"
   ],
+  safelist: [
+    'bg-gradient-to-r',
+    'from-purple-400',
+    'via-blue-400',
+    'to-indigo-400',
+    'bg-clip-text',
+    'text-transparent'
+  ],
   theme: {
   	extend: {
   		colors: {
