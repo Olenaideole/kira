@@ -1,3 +1,22 @@
+import { webcrypto } from 'crypto';
+
+// Define the salt
+const SALT = "kira_salt_2024";
+
+/**
+ * Hashes a password using SHA-256 with a predefined salt.
+ * @param password The password string to hash.
+ * @returns A promise that resolves to the hexadecimal string representation of the hash.
+ */
+export async function hashPassword(password: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(password + SALT);
+  const hashBuffer = await webcrypto.subtle.digest("SHA-256", data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  return hashHex;
+}
+
 // Pure custom authentication system - NO Supabase dependencies
 
 // Simple auth state management
@@ -94,8 +113,10 @@ export const getCurrentUser = async () => {
           currentUser = JSON.parse(stored)
           return currentUser
         } catch (parseError) {
-          // If parsing fails, clear the corrupted data
-          localStorage.removeItem("kira_user")
+          console.error("Error parsing stored user data:", parseError);
+          // If parsing fails, clear the corrupted data and ensure currentUser is null
+          localStorage.removeItem("kira_user");
+          currentUser = null;
         }
       }
     }

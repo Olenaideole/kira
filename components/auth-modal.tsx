@@ -58,7 +58,12 @@ export function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthModalProp
       }
     } catch (error: any) {
       console.error("Auth error:", error)
-      setMessage(error.message || "An error occurred")
+      setIsSuccess(false); // Ensure success state is reset on error
+      setMessage(
+        typeof error.message === 'string' && error.message
+        ? error.message
+        : "An unexpected error occurred. Please try again."
+      );
     } finally {
       setIsLoading(false)
     }
