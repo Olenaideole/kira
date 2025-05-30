@@ -71,7 +71,7 @@ export function Header() {
     <>
       <header className="w-full px-6 py-4 flex items-center justify-between relative z-20">
         <div className="flex items-center space-x-2">
-          <img src="/placeholder-logo.svg" alt="KIRA" className="h-8 w-auto" />
+          <div className="text-2xl font-bold text-white">KIRA</div>
           <div className="text-sm text-gray-300 mt-2">powered by Orb Super AI</div>
         </div>
 
