@@ -1,13 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-
-// Simple hash function using Web Crypto API
-async function hashPassword(password: string): Promise<string> {
-  const encoder = new TextEncoder()
-  const data = encoder.encode(password + "kira_salt_2024")
-  const hashBuffer = await crypto.subtle.digest("SHA-256", data)
-  const hashArray = Array.from(new Uint8Array(hashBuffer))
-  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("")
-}
+import { hashPassword } from "../../../lib/auth"
 
 export async function POST(request: NextRequest) {
   try {
@@ -64,8 +56,24 @@ export async function POST(request: NextRequest) {
     })
 
     if (!createResponse.ok) {
-      console.error("Database error:", await createResponse.text())
-      return NextResponse.json({ error: "Failed to create account" }, { status: 500 })
+      const errorText = await createResponse.text();
+      console.error("Database error:", errorText)
+      let specificError = "Unknown database error";
+      try {
+        // Try to parse Supabase error (which might be JSON with a message field)
+        const supabaseError = JSON.parse(errorText);
+        if (supabaseError && supabaseError.message) {
+          specificError = supabaseError.message;
+        } else if (errorText.includes("duplicate key value violates unique constraint")) {
+          specificError = "User with this email already exists.";
+        } else {
+          specificError = errorText.substring(0, 100); // Fallback to raw text snippet
+        }
+      } catch (e) {
+        // If parsing fails, use a snippet of the raw error text
+        specificError = errorText.substring(0, 100);
+      }
+      return NextResponse.json({ error: `Failed to create account: ${specificError}` }, { status: 500 })
     }
 
     return NextResponse.json({

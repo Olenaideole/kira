@@ -1,13 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-
-// Simple hash function using Web Crypto API (same as signup)
-async function hashPassword(password: string): Promise<string> {
-  const encoder = new TextEncoder()
-  const data = encoder.encode(password + "kira_salt_2024")
-  const hashBuffer = await crypto.subtle.digest("SHA-256", data)
-  const hashArray = Array.from(new Uint8Array(hashBuffer))
-  return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("")
-}
+import { hashPassword } from "../../../lib/auth"
 
 export async function POST(request: NextRequest) {
   try {
@@ -30,6 +22,12 @@ export async function POST(request: NextRequest) {
     }
 
     const users = await userResponse.json()
+
+    // Add this check
+    if (!Array.isArray(users) || users.length === 0) {
+      return NextResponse.json({ error: "Invalid email or password" }, { status: 400 });
+    }
+
     const userData = users[0]
 
     if (!userData) {
