@@ -71,9 +71,7 @@ export function Header() {
     <>
       <header className="w-full px-6 py-4 flex items-center justify-between relative z-20">
         <div className="flex items-center space-x-2">
-          <div className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
-            KIRA
-          </div>
+          <img src="/placeholder-logo.svg" alt="KIRA" className="h-8 w-auto" />
           <div className="text-sm text-gray-300 mt-2">powered by Orb Super AI</div>
         </div>
 
